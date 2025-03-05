@@ -1,0 +1,121 @@
+@keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(100vh) rotate(360deg); }
+  }
+  
+  @keyframes flicker {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(0.9); }
+  }
+  
+  @keyframes flicker-alt {
+    0%, 100% { opacity: 0.9; transform: scale(0.95); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes float {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-100vh) rotate(180deg); opacity: 0; }
+  }
+  
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0) rotate(45deg); }
+    50% { transform: translateY(-15px) rotate(45deg); }
+  }
+  
+  @keyframes float-slow-reverse {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(15px); }
+  }
+  
+  @keyframes float-medium {
+    0%, 100% { transform: translateY(0); }
+    33% { transform: translateY(-20px); }
+    66% { transform: translateY(10px); }
+  }
+  
+  @keyframes firework {
+    0% { transform: scale(0); opacity: 1; }
+    50% { transform: scale(0.5); opacity: 1; }
+    100% { transform: scale(1); opacity: 0; }
+  }
+  
+  @keyframes spark {
+    0% { transform-origin: center; opacity: 1; }
+    100% { transform-origin: center; transform: rotate(var(--angle)) translateY(-120px); opacity: 0; }
+  }
+  
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  @keyframes text-shimmer {
+    0% { background-position: -500px 0; }
+    100% { background-position: 500px 0; }
+  }
+  
+  @keyframes width-pulse {
+    0%, 100% { width: 32px; opacity: 0.5; }
+    50% { width: 100px; opacity: 1; }
+  }
+  
+  .animate-fall {
+    animation: fall 3s linear forwards;
+  }
+  
+  .animate-flicker {
+    animation: flicker 1.5s ease-in-out infinite;
+  }
+  
+  .animate-flicker-alt {
+    animation: flicker-alt 2s ease-in-out infinite;
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 1s ease-out forwards;
+  }
+  
+  .animate-float {
+    animation: float 8s ease-out forwards;
+  }
+  
+  .animate-float-slow {
+    animation: float-slow 6s ease-in-out infinite;
+  }
+  
+  .animate-float-slow-reverse {
+    animation: float-slow-reverse 7s ease-in-out infinite;
+  }
+  
+  .animate-float-medium {
+    animation: float-medium 9s ease-in-out infinite;
+  }
+  
+  .animate-firework {
+    animation: firework 2s ease-out forwards;
+  }
+  
+  .animate-spark {
+    animation: spark 2s ease-out forwards;
+  }
+  
+  .animate-gradient-shift {
+    animation: gradient-shift 8s ease infinite;
+    background-size: 200% 200%;
+  }
+  
+  .animate-text-shimmer {
+    animation: text-shimmer 3s infinite linear;
+    background-size: 200% 100%;
+  }
+  
+  .animate-width-pulse {
+    animation: width-pulse 3s ease-in-out infinite;
+  }
