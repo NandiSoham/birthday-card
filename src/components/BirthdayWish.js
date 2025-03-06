@@ -8,6 +8,8 @@ const BirthdayWish = () => {
   const [showHearts, setShowHearts] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [countdown, setCountdown] = useState(30);
+  const [countdownActive, setCountdownActive] = useState(true);
   const messageRef = useRef(null);
 
   const messages = [
@@ -35,6 +37,22 @@ const BirthdayWish = () => {
     };
   }, []);
 
+  // Countdown timer effect
+  useEffect(() => {
+    let timer;
+    if (countdownActive && countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown(prev => prev - 1);
+      }, 1000);
+    } else if (countdown === 0) {
+      setCountdownActive(false);
+    }
+    
+    return () => {
+      clearInterval(timer);
+    };
+  }, [countdown, countdownActive]);
+
   useEffect(() => {
     if (cakeClicked && messageRef.current) {
       setTimeout(() => {
@@ -46,6 +64,7 @@ const BirthdayWish = () => {
   const handleCakeClick = () => {
     setCakeClicked(true);
     setShowConfetti(true);
+    setCountdownActive(false);
     
     setTimeout(() => {
       setShowFireworks(true);
@@ -59,6 +78,28 @@ const BirthdayWish = () => {
       setShowConfetti(false);
       setShowFireworks(false);
     }, 6000);
+  };
+
+  // Function to create a heart element with randomized properties
+  const createHeart = (index) => {
+    return (
+      <div
+        key={`heart-${index}`}
+        className="absolute animate-float"
+        style={{
+          left: `${Math.random() * 100}%`,
+          bottom: '0',
+          animationDuration: `${Math.random() * 3 + 3}s`,
+          animationDelay: `${Math.random() * 2}s`,
+          opacity: Math.random() * 0.5 + 0.5,
+          filter: 'drop-shadow(0 0 8px rgba(255, 105, 180, 0.5))',
+          fontSize: `${Math.random() * 20 + 10}px`,
+          transform: `rotate(${Math.random() * 40 - 20}deg)`,
+        }}
+      >
+        ❤️
+      </div>
+    );
   };
   
   return (
@@ -89,13 +130,13 @@ const BirthdayWish = () => {
             {messages[messageIndex]}
           </div>
           
-          {/* Cake with glass effect */}
+          {/* Cake with glass effect - Fixed gift image container */}
           <div 
             className={`relative z-20 cursor-pointer transition-transform duration-300 p-8 rounded-3xl ${cakeClicked ? 'animate-bounce bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20' : 'hover:scale-110 hover:rotate-3 bg-white bg-opacity-5 backdrop-blur-sm border border-white border-opacity-10'}`}
             onClick={!cakeClicked ? handleCakeClick : undefined}
           >
             {/* Birthday Cake SVG - Modern Styled */}
-            <svg width="240" height="240" viewBox="0 0 240 240">
+            <svg width="240" height="240" viewBox="0 0 240 240" className="overflow-visible">
               {/* Cake Stand - Modern */}
               <rect x="85" y="180" width="70" height="4" rx="2" fill="rgba(255,255,255,0.8)" />
               <rect x="100" y="184" width="40" height="8" rx="2" fill="rgba(255,255,255,0.6)" />
@@ -152,9 +193,23 @@ const BirthdayWish = () => {
               </defs>
             </svg>
             
-            {/* Subtle hint text */}
+            {/* Countdown hint text */}
             {!cakeClicked && (
-              <p className="text-white text-opacity-60 text-center mt-4 text-sm font-light">Tap to celebrate</p>
+              <div className="text-white text-opacity-80 text-center mt-4">
+                <p className="text-sm font-light mb-1">
+                  {countdownActive 
+                    ? `Tap to celebrate in ${countdown}s, meanwhile please read above` 
+                    : "Tap to celebrate"}
+                </p>
+                {countdownActive && (
+                  <div className="w-full bg-white bg-opacity-10 rounded-full h-1 mt-2">
+                    <div 
+                      className="bg-gradient-to-r from-pink-300 to-purple-300 h-1 rounded-full transition-all duration-500"
+                      style={{ width: `${(countdown/30) * 100}%` }}
+                    ></div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
           
@@ -170,7 +225,7 @@ const BirthdayWish = () => {
         
         {/* Confetti Animation */}
         {showConfetti && (
-          <div className="absolute inset-0 z-10">
+          <div className="absolute inset-0 z-10 pointer-events-none">
             {[...Array(100)].map((_, i) => (
               <div
                 key={i}
@@ -195,7 +250,7 @@ const BirthdayWish = () => {
         
         {/* Fireworks Animation - Modern style */}
         {showFireworks && (
-          <div className="absolute inset-0 z-5">
+          <div className="absolute inset-0 z-5 pointer-events-none">
             {[...Array(15)].map((_, i) => (
               <div
                 key={i}
@@ -212,6 +267,7 @@ const BirthdayWish = () => {
                     key={j}
                     className="absolute animate-spark"
                     style={{
+                      '--angle': `${j * 18}deg`,
                       backgroundColor: ['#A3F7BF', '#FF9FF3', '#FEA47F', '#55E6C1', '#F97F51'][Math.floor(Math.random() * 5)],
                       width: '3px',
                       height: '3px',
@@ -242,28 +298,9 @@ const BirthdayWish = () => {
             backgroundColor: '#0F0A19',
           }}
         >
-          {/* Floating Hearts - 3D effect */}
+          {/* Continuous Floating Hearts with automatic re-rendering */}
           {showHearts && (
-            <div className="absolute inset-0 z-5">
-              {[...Array(30)].map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute animate-float"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    bottom: '0',
-                    animationDuration: `${Math.random() * 3 + 3}s`,
-                    animationDelay: `${Math.random() * 2}s`,
-                    opacity: Math.random() * 0.5 + 0.5,
-                    filter: 'drop-shadow(0 0 8px rgba(255, 105, 180, 0.5))',
-                    fontSize: `${Math.random() * 20 + 10}px`,
-                    transform: `rotate(${Math.random() * 40 - 20}deg)`,
-                  }}
-                >
-                  ❤️
-                </div>
-              ))}
-            </div>
+            <EmojisGenerator />
           )}
         
           {/* Message Card - Modern Glassmorphism */}
@@ -290,16 +327,16 @@ const BirthdayWish = () => {
               <div className="space-y-4 text-white text-opacity-90 leading-relaxed">
                 <p className="font-light text-lg">Today marks the celebration of another incredible year in your extraordinary life journey, and I simply couldn't let this moment pass without honoring all that you are.</p>
                 
-                <p>On this special day, I pray that life gives you back all the happiness you have given to others. May your dreams shine brighter than the stars, may your heart always be full of love, and may you always be surrounded by people who cherish you as much as I do.</p>
+                <p>On this special day, I pray that life gives you back all the happiness you have given to others. May your dreams shine brighter than the stars, may your heart always be full of love, and may you always be surrounded by people who cherish your presence and worth.</p>
                 
                 <div className="py-4 pl-4 border-l-2 border-pink-400 italic">
-                  <p>I cannot thank you enough<br/>
+                  <p>I cannot thank you enough...<br/>
                     For all the love, sacrifices, and care you have given me,<br/>
                   For every meal made with love, every story told with warmth,<br/>
                   For every lesson you've taught through both words and actions...</p>
                 </div>
                 
-                <p>I am <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-purple-300">forever grateful</span>. If I could give you anything today, it would be the same happiness you have given me all these years.</p>
+                <p>I am <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-purple-300">forever grateful</span>. If I could give you anything today, it would be the same happiness you have given us all these years.</p>
                 
                 <p>May this coming year bring you all the joy, love, blessings and happiness that you so richly deserve💖.</p>
               </div>
@@ -318,17 +355,85 @@ const BirthdayWish = () => {
             </div>
           </div>
           
-          {/* Modern 3D Digital Gift */}
-          <div className="mt-16 relative w-64 h-64 mx-auto transform hover:rotate-12 transition-transform duration-500">
-            <div className="absolute inset-0 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-600 rounded-2xl shadow-2xl transform rotate-45 animate-float-slow"></div>
-            <div className="absolute inset-4 flex items-center justify-center backdrop-blur-md bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl">
+          {/* Modern 3D Digital Gift - FIXED positioning and overflow issues */}
+          <div className="mt-16 relative w-64 h-64 mx-auto transform hover:rotate-12 transition-transform duration-500 overflow-visible">
+            <div className="absolute inset-0 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-600 rounded-2xl shadow-2xl transform rotate-45 z-10"></div>
+            <div className="absolute inset-4 flex items-center justify-center backdrop-blur-md bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl z-20">
               <div className="text-7xl transform -rotate-45">🎁</div>
             </div>
-            <div className="absolute w-full -top-3 h-6 bg-gradient-to-r from-pink-300 to-purple-300 rounded-full transform -rotate-45 opacity-80"></div>
-            <div className="absolute h-full -right-3 w-6 bg-gradient-to-b from-pink-300 to-purple-300 rounded-full transform -rotate-45 opacity-80"></div>
+            <div className="absolute -top-3 left-0 right-0 h-6 bg-gradient-to-r from-pink-300 to-purple-300 rounded-full transform -rotate-45 opacity-80 z-30"></div>
+            <div className="absolute -right-3 top-0 bottom-0 w-6 bg-gradient-to-b from-pink-300 to-purple-300 rounded-full transform -rotate-45 opacity-80 z-30"></div>
           </div>
         </div>
       )}
+    </div>
+  );
+};
+
+// Renamed component - Now generates various celebration emojis
+const EmojisGenerator = () => {
+  const [emojis, setEmojis] = useState([]);
+  
+  // Array of celebration emojis
+  const celebrationEmojis = [
+    '❤️', '🎂', '🎉', '🎊', '🎈', '✨', '🌟', '💫', '💖', '💝', 
+    '🥳', '🍰', '🎀', '🎁', '💐', '🌺', '🌸', '🌼', '🌷', '🥂'
+  ];
+  
+  // Function to create a new batch of emojis
+  const createEmojiBatch = () => {
+    const newEmojis = [];
+    for (let i = 0; i < 30; i++) {
+      newEmojis.push({
+        id: Date.now() + i,
+        emoji: celebrationEmojis[Math.floor(Math.random() * celebrationEmojis.length)],
+        left: `${Math.random() * 100}%`,
+        animationDuration: `${Math.random() * 3 + 3}s`,
+        delay: `${Math.random() * 2}s`,
+        opacity: Math.random() * 0.5 + 0.5,
+        size: `${Math.random() * 20 + 10}px`,
+        rotation: `${Math.random() * 40 - 20}deg`,
+      });
+    }
+    return newEmojis;
+  };
+  
+  // Initialize emojis
+  useEffect(() => {
+    setEmojis(createEmojiBatch());
+    
+    // Set up interval to continuously add new emojis
+    const interval = setInterval(() => {
+      setEmojis(prevEmojis => {
+        // Keep the last 30 emojis and add new ones to avoid too many DOM elements
+        const filtered = prevEmojis.slice(-30);
+        return [...filtered, ...createEmojiBatch()];
+      });
+    }, 3000); // Create new batch every 3 seconds
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  return (
+    <div className="absolute inset-0 z-5 overflow-hidden pointer-events-none">
+      {emojis.map(emoji => (
+        <div
+          key={emoji.id}
+          className="absolute animate-float"
+          style={{
+            left: emoji.left,
+            bottom: '0',
+            animationDuration: emoji.animationDuration,
+            animationDelay: emoji.delay,
+            opacity: emoji.opacity,
+            filter: 'drop-shadow(0 0 8px rgba(255, 105, 180, 0.5))',
+            fontSize: emoji.size,
+            transform: `rotate(${emoji.rotation})`,
+          }}
+        >
+          {emoji.emoji}
+        </div>
+      ))}
     </div>
   );
 };
